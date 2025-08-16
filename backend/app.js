@@ -12,10 +12,12 @@ app.use(express.json());
 // Import routes
 const usersRoutes = require("./routes/users");
 // Add other route imports here (e.g., messagesRoutes)
+const messagesRoutes = require("./routes/messages");
 
 // Mount routes
+
 app.use("/users", usersRoutes);
-// app.use("/messages", messagesRoutes); // Example for messages
+app.use("/messages", messagesRoutes); 
 
 // Test route
 app.get("/", (req, res) => {
