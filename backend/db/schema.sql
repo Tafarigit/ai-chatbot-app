@@ -19,6 +19,5 @@ CREATE TABLE messages (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Index for better performance when loading conversation history
 CREATE INDEX idx_messages_user_created ON messages(user_id, created_at);
 
