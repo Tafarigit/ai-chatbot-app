@@ -1,87 +1,77 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { Link } from "react-router-dom"; // Add this missing import
+import { useAuth } from "./useAuth";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useAuth } from "./useAuth"; // <-- import the custom hook
-
-const API_URL = "http://localhost:3001";
 
 const Register = () => {
-  const { loginUser } = useAuth(); // <-- access loginUser function from context
+  const { loginUser } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
   });
-  const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setMessage("");
+    setError("");
 
     try {
-      const response = await axios.post(`${API_URL}/api/auth/register`, formData);
-      console.log("User registered:", response.data);
-
-      // Automatically log in the new user
-      loginUser(response.data);
-
-      setMessage(`Registration successful! Welcome, ${response.data.username}`);
+      const res = await axios.post(
+        "http://localhost:3001/api/auth/register",
+        formData
+      );
+      loginUser(res.data);
       setFormData({ username: "", email: "", password: "" });
+      navigate("/");
     } catch (err) {
       console.error("Registration error:", err);
-      setMessage(err.response?.data?.error || "Registration failed");
-    } finally {
-      setLoading(false);
+      setError(err.response?.data?.error || "Registration failed.");
     }
   };
 
   return (
     <div>
-      <h2>Register</h2>
-      {message && <p>{message}</p>}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Username:</label>
-          <input
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Email:</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Password:</label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <button type="submit" disabled={loading}>
-          {loading ? "Registering..." : "Register"}
-        </button>
+      <form onSubmit={handleRegister}>
+        <input
+          type="text"
+          name="username"
+          placeholder="Username"
+          value={formData.username}
+          onChange={handleChange}
+          autoComplete="off"
+          required
+        />
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={formData.email}
+          onChange={handleChange}
+          autoComplete="off"
+          required
+        />
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={formData.password}
+          onChange={handleChange}
+          autoComplete="new password"
+          required
+        />
+        <button type="submit">Register</button>
+        {error && <p style={{ color: "red" }}>{error}</p>}
       </form>
+      <p style={{ textAlign: "center", marginTop: "20px" }}>
+        <Link to="/">Home</Link> | <Link to="/login">Already have an account? Login</Link>
+      </p>
     </div>
   );
 };
