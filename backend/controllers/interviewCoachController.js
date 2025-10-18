@@ -1,14 +1,20 @@
+const questionPool = [
+  "Tell me about a time you handled a conflict at work.",
+  "Describe a project where you had to overcome challenges.",
+  "Give an example of when you showed leadership.",
+  "How do you prioritize tasks under tight deadlines?",
+  "Tell me about a time you made a mistake and how you handled it.",
+];
+
 const evaluateInterviewResponse = async (req, res) => {
   try {
     const { question, answer } = req.body;
 
     if (!question || !answer) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Both question and answer are required.",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Both question and answer are required.",
+      });
     }
 
     const rubric = {
@@ -33,12 +39,12 @@ const evaluateInterviewResponse = async (req, res) => {
         Candidate's Response: ${answer}
         `;
     const aiResponse = {
-          clarity: 8,
-          structure: 7,
-          impact: 9,
-          overall: 8,
-          feedback: "Strong communication and well-structured response.",
-        };
+      clarity: 8,
+      structure: 7,
+      impact: 9,
+      overall: 8,
+      feedback: "Strong communication and well-structured response.",
+    };
     res.status(200).json({ success: true, result: aiResponse });
   } catch (error) {
     console.error("Interview Coach Error:", error);
@@ -48,4 +54,16 @@ const evaluateInterviewResponse = async (req, res) => {
   }
 };
 
-module.exports = { evaluateInterviewResponse };
+const getInterviewQuestions = (req, res) => {
+  try {
+    res.status(200).json({ success: true, questions: questionPool });
+  } catch (error) {
+    console.error("Error fetching interview questions:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching interview questions",
+    });
+  }
+};
+
+module.exports = { evaluateInterviewResponse, getInterviewQuestions };
