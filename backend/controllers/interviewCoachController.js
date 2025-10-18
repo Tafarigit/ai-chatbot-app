@@ -32,9 +32,7 @@ const evaluateInterviewResponse = async (req, res) => {
         Interview Question: ${question}
         Candidate's Response: ${answer}
         `;
-    const aiResponse = (await callAIService)
-      ? await callAIService(systemPrompt, fullPrompt)
-      : {
+    const aiResponse = {
           clarity: 8,
           structure: 7,
           impact: 9,

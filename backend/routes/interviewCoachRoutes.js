@@ -1,8 +1,9 @@
 const express = require("express");
-const axios = require("axios");
+
+const { evaluateInterviewResponse } = require("../controllers/interviewCoachController");
 
 const router = express.Router();
 
-
+router.post("/evaluate", evaluateInterviewResponse);
 
 module.exports = router;
