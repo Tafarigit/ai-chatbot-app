@@ -5,6 +5,8 @@ import Register from "./Components/Register";
 import Login from "./Components/Login";
 import Chatbox from "./Components/Chatbox";
 import { useAuth } from "./Components/useAuth";
+import InterviewCoach from "./Components/InterviewCoach";
+
 
 function App() {
   const { user } = useAuth();
@@ -17,7 +19,8 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
         </Routes>
-        {user && <Chatbox />}
+        {/* {user && <Chatbox />} */}
+        {user && <InterviewCoach />}
       </Router>
     </div>
   );
