@@ -37,7 +37,7 @@ const handleSubmit = async (e) => {
 
 return (
     <div>
-        <h2>AI Interview Interview Coach</h2>
+        <h2>AI Interview Coach</h2>
         <form
             onSubmit = {handleSubmit}>
                 <label>
@@ -67,8 +67,11 @@ return (
                 <p>Structure: {feedback.structure}</p>
                 <p>Impact : {feedback.impact}</p>
                 <p>Overall: {feedback.overall}</p>
-                <p>Comments: {feedback.feedback}</p>
+                <div style={{ marginTop: "1em" }}>
+                <h4>Comments:</h4>
+                <p style={{ whiteSpace: "pre-wrap" }}>{feedback.comments}</p>
                 </div>
+            </div>
         )}
     </div>
 );
