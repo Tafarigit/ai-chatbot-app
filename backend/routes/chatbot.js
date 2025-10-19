@@ -4,9 +4,7 @@ const pool = require("../db/dbConfig");
 const { createPrompt } = require("../services/promptTemplates");
 
 router.post("/", async (req, res) => {
-  console.log("🚀 CHATBOT ROUTE HIT");
   const { userMessage, userId } = req.body;
-  console.log("📥 Request body:", { userMessage, userId });
 
   if (!process.env.GEMINI_API_KEY) {
     console.log("❌ Missing API key");
@@ -16,21 +14,15 @@ router.post("/", async (req, res) => {
   }
 
   if (!userMessage || !userId) {
-    console.log("❌ Missing userMessage or userId");
     return res.status(400).json({ error: "userMessage and userId required" });
   }
 
   try {
-    console.log("💾 Saving user message to database...");
-    console.log("Received:", { userMessage, userId });
-
     await pool.query(
       `INSERT INTO messages (user_id, content, is_bot_message) VALUES ($1, $2, $3)`,
       [userId, userMessage, false]
     );
-    console.log("✅ User message saved");
 
-    console.log("🤖 Calling Gemini API...");
     const geminiResponse = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
@@ -45,15 +37,11 @@ router.post("/", async (req, res) => {
         }),
       }
     );
-    console.log("📡 Gemini response status:", geminiResponse.status);
     const geminiData = await geminiResponse.json();
-    console.log("📦 Gemini data:", JSON.stringify(geminiData, null, 2));
 
     const botReplyText =
       geminiData.candidates?.[0]?.content?.parts?.[0]?.text ||
       "Sorry, I couldn't generate a response.";
-
-    console.log("Raw AI Response:", botReplyText);
 
     let formattedResponse;
     try {
