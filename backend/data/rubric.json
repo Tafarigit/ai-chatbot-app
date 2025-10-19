@@ -1,0 +1,7 @@
+    {
+        "clarity": "How clearly and concisely did the candidate express ideas?",
+        "structure": "Did the response follow a logical framework (STAR, etc.)?",
+        "impact": "Did the answer show measurable outcomes or influence?",
+        "overall": "What is the overall quality of the response?",
+        "comments": "What specific improvements can be made to enhance the answer?"
+    }

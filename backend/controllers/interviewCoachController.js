@@ -1,68 +1,74 @@
-const questionPool = [
-  "Tell me about a time you handled a conflict at work.",
-  "Describe a project where you had to overcome challenges.",
-  "Give an example of when you showed leadership.",
-  "How do you prioritize tasks under tight deadlines?",
-  "Tell me about a time you made a mistake and how you handled it.",
-];
+const axios = require("axios");
+const { createPrompt } = require("../services/promptTemplates");
+
+async function callAIService(prompt) {
+  try {
+    const response = await axios.post(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      {
+        contents: [{ parts: [{ text: prompt }] }],
+      },
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+
+    const data = response.data;
+    return (
+      data.candidates?.[0]?.content?.parts?.[0]?.text ||
+      "Sorry, no response from AI."
+    );
+  } catch (error) {
+    console.error("Error calling AI service:", error);
+    return "Sorry, AI service could not generate a response.";
+  }
+}
 
 const evaluateInterviewResponse = async (req, res) => {
   try {
     const { question, answer } = req.body;
 
     if (!question || !answer) {
-      return res.status(400).json({
-        success: false,
-        message: "Both question and answer are required.",
-      });
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing question or answer" });
     }
 
-    const rubric = {
-      clarity: 0.3,
-      structure: 0.3,
-      impact: 0.4,
-    };
+    const prompt = createPrompt(answer);
 
-    const systemPrompt = `You are an experienced interview coach. Evaluate the following candidate's response based on the rubric below.
-        Rubric: ${JSON.stringify(rubric)}
-        Return feedback in JSON format:
-        {
-        "clarity": 0-10,
-        "structure": 0-10,
-        "impact": 0-10,
-        "overall": 0-10,
-        "feedback": "..."
-        }
-        `;
-    const fullPrompt = `
-        Interview Question: ${question}
-        Candidate's Response: ${answer}
-        `;
-    const aiResponse = {
-      clarity: 8,
-      structure: 7,
-      impact: 9,
-      overall: 8,
-      feedback: "Strong communication and well-structured response.",
-    };
-    res.status(200).json({ success: true, result: aiResponse });
-  } catch (error) {
-    console.error("Interview Coach Error:", error);
+    const aiOutput = await callAIService(prompt);
+    console.log("Raw Gemini output:\n", aiOutput);
+
+    let parsed;
+    try {
+      parsed = JSON.parse(aiOutput);
+    } catch {
+      parsed = { rawResponse: aiOutput };
+    }
+
+    res.json({ success: true, result: parsed });
+  } catch (err) {
+    console.error("Error evaluating response:", err);
     res
       .status(500)
       .json({ success: false, message: "Error evaluating response" });
   }
 };
 
-const getInterviewQuestions = (req, res) => {
+const getInterviewQuestions = async (req, res) => {
   try {
-    res.status(200).json({ success: true, questions: questionPool });
-  } catch (error) {
-    console.error("Error fetching interview questions:", error);
-    res.status(500).json({
-      success: false,
-      message: "Error fetching interview questions",
-    });
+    const questions = [
+      "Tell me about a time you overcame a challenge at work.",
+      "How do you handle tight deadlines?",
+      "Describe a situation where you worked in a team to solve a problem.",
+    ];
+
+    res.json({ success: true, questions });
+  } catch (err) {
+    console.error("Error fetching interview questions:", err);
+    res
+      .status(500)
+      .json({ success: false, message: "Error fetching questions" });
   }
 };
 

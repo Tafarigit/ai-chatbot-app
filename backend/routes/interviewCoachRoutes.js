@@ -1,6 +1,9 @@
 const express = require("express");
 
-const { evaluateInterviewResponse, getInterviewQuestions } = require("../controllers/interviewCoachController");
+const {
+  evaluateInterviewResponse,
+  getInterviewQuestions,
+} = require("../controllers/interviewCoachController");
 
 const router = express.Router();
 
