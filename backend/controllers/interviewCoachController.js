@@ -25,7 +25,9 @@ async function callAIService(prompt) {
 }
 
 const evaluateInterviewResponse = async (req, res) => {
+
   try {
+    const userId = req.user.id;
     const { question, answer } = req.body;
 
     if (!question || !answer) {
