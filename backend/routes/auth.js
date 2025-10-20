@@ -2,6 +2,9 @@ const express = require("express");
 const router = express.Router();
 const pool = require("../db/dbConfig");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
+const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
 
 router.post("/register", async (req, res) => {
   const { username, email, password } = req.body;
@@ -59,9 +62,12 @@ router.post("/login", async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({ error: "Invalid email or password" });
     }
+    const payload = { id: user.id, email: user.email };
 
+    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "1h" });
+    
     const { id, username, email: userEmail } = user;
-    res.json({ id, username, email: userEmail });
+    res.json({ id, username, email: userEmail, token });
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).json({ error: "Server error during login" });
