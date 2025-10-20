@@ -1,11 +1,16 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useAuth } from "./useAuth";    
+
+
 
 const InterviewCoach = () => {
+    const { token } = useAuth();
     const [questions, setQuestions ] = useState([]);
     const [selectedQuestion, setSeleectedQuestion] = useState("");
     const [answer, setAnswer] = useState("");
     const [feedback, setFeedback] = useState(null);
+    const { user } = useAuth();
 
 useEffect(() => {
     const fetchQuestions = async () => {
@@ -27,7 +32,8 @@ const handleSubmit = async (e) => {
     try {
         const res = await axios.post("http://localhost:3001/api/interview/evaluate",  {
             question: selectedQuestion,
-            answer
+            answer },
+        { headers: { Authorization: `Bearer ${user?.token}` }
         });
         setFeedback(res.data.result);
     } catch(err) {
@@ -57,6 +63,8 @@ return (
                 onChange={(e) => setAnswer(e.target.value)}
                 />
                 <button type="submit">Submit Answer</button>
+                {!token && (<p style={{ color: "red", marginTop:"0.5cm" }}>Please log in to use the interview coach.</p>
+                )}
         </form>
         {feedback && (
             <div>
