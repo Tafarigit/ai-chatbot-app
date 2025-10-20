@@ -1,4 +1,5 @@
 const express = require("express");
+const requireAuth  = require("./requireAuth")
 
 const {
   evaluateInterviewResponse,
@@ -7,7 +8,7 @@ const {
 
 const router = express.Router();
 
-router.post("/evaluate", evaluateInterviewResponse);
+router.post("/evaluate", requireAuth, evaluateInterviewResponse);
 
 router.get("/questions", getInterviewQuestions);
 
