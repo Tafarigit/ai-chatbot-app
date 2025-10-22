@@ -29,6 +29,18 @@ useEffect(() => {
 const handleSubmit = async (e) => {
     e.preventDefault();
     if(!answer || !selectedQuestion) return;
+
+        if (!token) {
+        setFeedback({
+            clarity: null,
+            structure: null,
+            impact: null,
+            overall: null,
+            comments: "⚠ You must be logged in to submit an answer."
+        });
+        return;
+    };
+
     try {
         const res = await axios.post("http://localhost:3001/api/interview/evaluate",  {
             question: selectedQuestion,
@@ -62,8 +74,10 @@ return (
                 value={answer}
                 onChange={(e) => setAnswer(e.target.value)}
                 />
-                <button type="submit">Submit Answer</button>
-                {!token && (<p style={{ color: "red", marginTop:"0.5cm" }}>Please log in to use the interview coach.</p>
+                <button type="submit" disabled={!token} title={!token ? "Log in to submit your answer" : ""}>Submit Answer</button>
+                {!token && (<p style={{ color: "red", marginTop:"0.5cm" }}>Please log in to use the interview coach.
+                     <a href="/login">Click here to log in</a>
+                </p>
                 )}
         </form>
         {feedback && (
