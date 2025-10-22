@@ -1,5 +1,6 @@
+// 
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./Components/Home";
 import Register from "./Components/Register";
 import Login from "./Components/Login";
@@ -13,11 +14,28 @@ function App() {
     <div className="app-container">
       <Router>
         <Routes>
-          <Route path="/" element={user ? null : <Home />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
+          {/* Home page - only show if not logged in */}
+          <Route 
+            path="/" 
+            element={user ? <Navigate to="/chatbot" /> : <Home />} 
+          />
+          
+          {/* Auth routes - redirect to chatbot if already logged in */}
+          <Route 
+            path="/register" 
+            element={user ? <Navigate to="/chatbot" /> : <Register />} 
+          />
+          <Route 
+            path="/login" 
+            element={user ? <Navigate to="/chatbot" /> : <Login />} 
+          />
+          
+          {/* Protected chatbot route - only accessible when logged in */}
+          <Route 
+            path="/chatbot" 
+            element={user ? <Chatbox /> : <Navigate to="/login" />} 
+          />
         </Routes>
-        {user && <Chatbox />}
       </Router>
     </div>
   );
