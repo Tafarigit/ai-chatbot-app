@@ -1,5 +1,5 @@
 const express = require("express");
-const requireAuth  = require("./requireAuth")
+const requireAuth  = require("../middleware/requireAuth")
 
 const {
   evaluateInterviewResponse,

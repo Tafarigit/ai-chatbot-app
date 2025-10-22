@@ -7,7 +7,7 @@ const requireAuth = (req, res, next) => {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res.status(401).json({errir: "Unauthorized: missing token" });
+        return res.status(401).json({error: "Unauthorized: missing token" });
     }
 
     const token = authHeader.split(" ")[1];

@@ -15,4 +15,6 @@ app.use("/api/auth", authRoutes);
 app.use("/api/chatbot", chatbotRoutes);
 app.use("/api/interview", interviewCoachRoutes)
 
+app.get("/api/test", (req, res) => res.json({ ok: true }));
+
 module.exports = app;
